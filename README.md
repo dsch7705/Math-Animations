@@ -1,1 +1,1 @@
-# Math-Animations
+# Collection of math animations
