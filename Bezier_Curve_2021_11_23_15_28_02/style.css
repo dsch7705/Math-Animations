@@ -1,0 +1,17 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+canvas {
+  display: block;
+}
+
+#title {
+  text-align: center;
+  margin: 50px;
+}
+
+#footer {
+  text-align: center;
+}
