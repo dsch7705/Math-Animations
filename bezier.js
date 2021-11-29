@@ -1,5 +1,7 @@
 /// <reference path="./p5.global-mode.d.ts"/>
 
+// Created by Dylan Schooner using p5.js
+
 let segments = 5;
 let clock = 0;
 
