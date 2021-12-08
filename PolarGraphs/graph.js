@@ -114,16 +114,16 @@ function pathVertices() {
   for (let i = 0; i <= TWO_PI; i+= PI / 100) {
     switch (func) {
       case "LIMACON":
-        vert = [width / 2 + cos(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i), height / 2 + sin(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i)];
+        vert = [width / 2 + cos(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i), height / 2 - sin(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i)];
         break;
       case "LEMNISCATE":
-        vert = [width / 2 + cos(i) * lemniscate(amplitude.value(), i), height / 2 + sin(i) * lemniscate(amplitude.value(), i)];
+        vert = [width / 2 + cos(i) * lemniscate(amplitude.value(), i), height / 2 - sin(i) * lemniscate(amplitude.value(), i)];
         break;
       case "ROSE":
-        vert = [width / 2 + cos(i) * rose(amplitude.value(), angleCoefficient.value(), i), height / 2 + sin(i) * rose(amplitude.value(), angleCoefficient.value(), i)];
+        vert = [width / 2 + cos(i) * rose(amplitude.value(), angleCoefficient.value(), i), height / 2 - sin(i) * rose(amplitude.value(), angleCoefficient.value(), i)];
         break;
       case "SPIRAL":
-        vert = [width / 2 + cos(i) * spiral(amplitude.value()  / 2, i), height / 2 + sin(i) * spiral(amplitude.value() / 2, i)];
+        vert = [width / 2 + cos(i) * spiral(amplitude.value()  / 2, i), height / 2 - sin(i) * spiral(amplitude.value() / 2, i)];
         break;
     }
     vertices.push(vert);
