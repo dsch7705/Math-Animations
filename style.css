@@ -13,7 +13,11 @@ body {
     margin-top: 50px;
 }
 
-#app {
+#bezier {
+    float: left;
+}
+
+#polars {
     float: left;
     clear: both;
 }
