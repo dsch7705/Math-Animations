@@ -104,7 +104,7 @@ function drawPath() {
   strokeWeight(pathThickness.value());
   for (let i = 0; i < vertices.length - 1; i++) {
     //vertex(vertices[i].x, vertices[i].y);
-    line(vertices[i][0], vertices[i][1], vertices[i+1][0], vertices[i+1][1]);
+    line(vertices[i][0], vertices[i][1], vertices[i+1 % vertices.length][0], vertices[i+1 % vertices.length][1]);
     //vertex(vertices[i][0], vertices[i][1]);
   }
 }
