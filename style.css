@@ -12,3 +12,8 @@ body {
     margin: auto;
     margin-top: 50px;
 }
+
+#app {
+    float: left;
+    clear: both;
+}
