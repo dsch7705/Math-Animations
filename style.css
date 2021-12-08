@@ -14,10 +14,10 @@ body {
 }
 
 #bezier {
-    float: left;
+    float: center;
 }
 
 #polars {
-    float: left;
+    float: center;
     clear: both;
 }
