@@ -146,7 +146,7 @@ function updatePosition() {
       break;
   }
   xPos = width / 2 + cos(clock) * radius;
-  yPos = height / 2 + sin(clock) * radius;
+  yPos = height / 2 - sin(clock) * radius;
   drawRT();
   
   tickClock();
