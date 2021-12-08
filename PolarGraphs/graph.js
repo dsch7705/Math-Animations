@@ -90,6 +90,7 @@ function draw() {
   updatePosition();
   
   text("r = " + int(radius * 1000) / 1000, width - 100, 50);
+  text("Θ = " + int(clock * 1000) / 1000, width - 100, 65);
 
   noFill();
   circle(width / 2, height / 2, radius * 2);
