@@ -111,7 +111,7 @@ function drawPath() {
 
 function pathVertices() {
   vertices.length = 0;
-  for (let i = 0; i <= 2 * TWO_PI; i+= PI / 50) {
+  for (let i = 0; i <= 4 * TWO_PI; i+= PI / 100) {
     switch (func) {
       case "LIMACON":
         vert = [width / 2 + cos(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i), height / 2 - sin(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i)];
@@ -187,13 +187,13 @@ function drawUCLines() {
   
   // 45 degrees
   line(width / 2 + cos(PI / 4) * offset, height / 2 - sin(PI / 4) * offset, width / 2 - cos(PI / 4) * offset, height / 2 + sin(PI / 4) * offset);
-  line(width / 2 + cos(PI / 4) * offset, height / 2 + sin(PI / 4) * offset, width / 2 - cos(PI / 4) * offset, height / 2 - sin(PI / 4) * offset)
+  line(width / 2 + cos(PI / 4) * offset, height / 2 + sin(PI / 4) * offset, width / 2 - cos(PI / 4) * offset, height / 2 - sin(PI / 4) * offset);
   
   // 30 degrees
   line(width / 2 + cos(PI / 6) * offset, height / 2 - sin(PI / 6) * offset, width / 2 - cos(PI / 6) * offset, height / 2 + sin(PI / 6) * offset);
-  line(width / 2 + cos(PI / 6) * offset, height / 2 + sin(PI / 6) * offset, width / 2 - cos(PI / 6) * offset, height / 2 - sin(PI / 6) * offset)
+  line(width / 2 + cos(PI / 6) * offset, height / 2 + sin(PI / 6) * offset, width / 2 - cos(PI / 6) * offset, height / 2 - sin(PI / 6) * offset);
   
   // 60 degrees
   line(width / 2 + cos(PI / 3) * offset, height / 2 - sin(PI / 3) * offset, width / 2 - cos(PI / 3) * offset, height / 2 + sin(PI / 3) * offset);
-  line(width / 2 + cos(PI / 3) * offset, height / 2 + sin(PI / 3) * offset, width / 2 - cos(PI / 3) * offset, height / 2 - sin(PI / 3) * offset)
+  line(width / 2 + cos(PI / 3) * offset, height / 2 + sin(PI / 3) * offset, width / 2 - cos(PI / 3) * offset, height / 2 - sin(PI / 3) * offset);
 }
