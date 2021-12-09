@@ -111,10 +111,13 @@ function drawPath() {
 
 function pathVertices() {
   vertices.length = 0;
-  for (let i = 0; i <= 4 * TWO_PI; i+= PI / 100) {
+  for (let i = 0; i <= TWO_PI; i+= PI / 100) {
     switch (func) {
       case "LIMACON":
         vert = [width / 2 + cos(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i), height / 2 - sin(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i)];
+        if (vert[0] == vert[1]) {
+          continue;
+        }
         break;
       case "LEMNISCATE":
         vert = [width / 2 + cos(i) * lemniscate(amplitude.value(), i), height / 2 - sin(i) * lemniscate(amplitude.value(), i)];
