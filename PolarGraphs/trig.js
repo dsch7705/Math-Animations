@@ -1,5 +1,5 @@
 function limacon(a, b, theta) {
-  result = a + b * sin(theta;
+  result = a + b * sin(theta);
   return result;
 }
 
