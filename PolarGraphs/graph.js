@@ -111,7 +111,7 @@ function drawPath() {
 
 function pathVertices() {
   vertices.length = 0;
-  for (let i = 0; i <= 2 * TWO_PI; i+= PI / 100) {
+  for (let i = 0; i <= 2 * TWO_PI; i+= PI / 50) {
     switch (func) {
       case "LIMACON":
         vert = [width / 2 + cos(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i), height / 2 - sin(i) * limacon(amplitude.value(), angleCoefficient.value() * 20, i)];
