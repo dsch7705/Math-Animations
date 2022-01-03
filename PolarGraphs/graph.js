@@ -157,7 +157,7 @@ function updatePosition() {
 
 function tickClock() {
   clock += deltaTime / 1000;
-  if (clock >= 2 * TWO_PI) {
+  if (clock >= TWO_PI) {
     clock = 0;
   }
 }
