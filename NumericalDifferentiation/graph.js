@@ -1,3 +1,5 @@
+let canvas;
+
 var vertCount = 75;
 var tanPos = -vertCount / 2;
 var equation = '-x^2';
@@ -9,7 +11,7 @@ let allowScroll;
 let scroll;
 
 function setup() {
-  createCanvas(600, 400);
+  canvas = createCanvas(600, 400);
   
   eqBox = createInput();
   eqButton = createButton("Submit");
@@ -20,6 +22,10 @@ function setup() {
   
   allowScroll = createCheckbox();
   scroll = createSlider(-vertCount / 2, vertCount / 2, 0);
+}
+
+function windowResized() {
+  canvas.position(windowWidth / 2 - width / 2, windowHeight / 2 - height / 2);
 }
 
 function draw() {
