@@ -12,6 +12,7 @@ let scroll;
 
 function setup() {
   canvas = createCanvas(600, 400);
+  canvas.position(windowWidth / 2 - width / 2, windowHeight / 2 - height - 2);
   
   eqBox = createInput();
   eqButton = createButton("Submit");
