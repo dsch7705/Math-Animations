@@ -9,7 +9,7 @@ let allowScroll;
 let scroll;
 
 function setup() {
-  createCanvas(400, 400);
+  createCanvas(600, 400);
   
   eqBox = createInput();
   eqButton = createButton("Submit");
