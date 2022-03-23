@@ -12,10 +12,12 @@ let scroll;
 
 function setup() {
   canvas = createCanvas(600, 400);
-  canvas.position(windowWidth / 2 - width / 2, windowHeight / 2 - height - 2);
+  canvas.position(windowWidth / 2 - width / 2, windowHeight / 2 - height / 2);
   
   eqBox = createInput();
+  eqBox.position(windowWidth / 2, windowHeight / 2 + height / 2 + 25);
   eqButton = createButton("Submit");
+  eqButton.position(windowWidth / 2 + 50, windowHeight / 2 + height / 2 + 25);
   
   eqButton.mousePressed(() => {
     equation = eqBox.value();
