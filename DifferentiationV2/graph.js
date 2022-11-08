@@ -1,5 +1,6 @@
 // Image buffers
 var fx, dydx;
+var buffer_width = 600; // In pixels
 
 var graph_size = 20;
 var unit_size;
@@ -25,9 +26,9 @@ var fourier_saw =
 
 function setup() {
   // Canvas and graphics buffers
-  createCanvas(700, 350);
-  fx = createGraphics(350, 350);
-  dydx = createGraphics(350, 350);
+  createCanvas(buffer_width*2, buffer_width);
+  fx = createGraphics(buffer_width, buffer_width);
+  dydx = createGraphics(buffer_width, buffer_width);
   
   fx.translate(fx.width/2, fx.height/2);
   dydx.translate(dydx.width/2, dydx.height/2)
@@ -90,7 +91,7 @@ function draw() {
   image(fx, 0, 0);
   
   graph_dydx();
-  image(dydx, 350, 0);
+  image(dydx, buffer_width, 0);
 
   // Increment position on graph, used by tangent line
   graph_pos = !user_selected ? (graph_pos + 1) % points.length : graph_pos;
