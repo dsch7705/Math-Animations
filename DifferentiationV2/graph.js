@@ -1,22 +1,30 @@
-// Image buffers
+// Canvas and image buffers
+var c;
 var fx, dydx;
-var buffer_width = 600; // In pixels
+var buffer_width = screen.width * 0.33; // In pixels
 
 var graph_size = 20;
 var unit_size;
 var curve_resolution = 20;  // # of evaluations between each whole unit
 
+// Graph point vars
 var points = [];
+var null_point;
 
 var graph_pos = 0;
 var user_selected = false;
 var len_tan_line = 4; // In units
 
 // UI 
+var function_select;
+var function_input;
+var function_input_button;
 var x_input;
 var evaluate_button;
 var follow_mouse_bool;
-var function_select;
+var error_text;
+
+var ui_container;
 
 // Example functions
 var fourier_square = '4sin(x)/PI+4sin(3x)/3PI+4sin(5x)/5PI+4sin(7x)/7PI+4sin(9x)/9PI+4sin(11x)/11PI+4sin(13x)/13PI+4sin(15x)/15PI+4sin(17x)/17PI+4sin(19x)/19PI+4sin(21x)/21PI+4sin(23x)/23PI';
@@ -26,7 +34,10 @@ var fourier_saw =
 
 function setup() {
   // Canvas and graphics buffers
-  createCanvas(buffer_width*2, buffer_width);
+  c = createCanvas(buffer_width*2, buffer_width);
+  c.id("graph");
+  c.class("centered");
+
   fx = createGraphics(buffer_width, buffer_width);
   dydx = createGraphics(buffer_width, buffer_width);
   
@@ -35,13 +46,53 @@ function setup() {
   
   unit_size = fx.width/graph_size;
   
+  // point vars
+  null_point = [createVector(0, 0), 0];
+
   // UI
-  x_input = createInput()
+  // initialize ui container div
+  ui_container = createDiv();
+  ui_container.id("controls");
+  document.getElementById("controls").style.height = buffer_width + "px";
+  ui_container.class("centered-left");
+
+  // initialize ui elements
+  function_select = createSelect();
+  function_input = createInput();
+  function_input_button = createButton("Enter");
+  x_input = createInput('', 'number');
   evaluate_button = createButton("Evaluate");
   follow_mouse_bool = createCheckbox("Follow mouse", false);
-  function_select = createSelect();
+  error_text = createP();
+
+  // set ui elements as children of ui div
+  function_select.parent(ui_container);
+  br();
+  function_input.parent(ui_container);
+  function_input_button.parent(ui_container);
+  br();
+  x_input.parent(ui_container);
+  evaluate_button.parent(ui_container);
+  br();
+  follow_mouse_bool.parent(ui_container);
+  error_text.parent(ui_container);
+
+  // misc ui stuff
+  function_input.attribute("placeholder", "f(x) = ");
+  x_input.attribute("placeholder", "x = ");
+  error_text.id("error");
   
   // UI functions
+  // Calculate graph for given function input
+  function_input_button.mousePressed(() => {
+    graph_pos = 0;
+    points = []
+    if (calculate_graph(function_input.value()) == -1) {
+      points.push(null_point);
+      console.log(points);
+    }
+  });
+
   // Evaluate derivative for given x input
   evaluate_button.mousePressed(() => {
     var x = (points.findIndex((element) => element[0].x == parseFloat(x_input.value())));
@@ -84,6 +135,23 @@ function setup() {
   calculate_graph(function_select.value());
 }
 
+function windowResized() {
+  // update buffer size for new screen width
+  buffer_width = windowWidth * 0.33;
+  
+  // resize canvas and image buffers
+  resizeCanvas(buffer_width * 2, buffer_width);
+
+  fx = createGraphics(buffer_width, buffer_width);
+  dydx = createGraphics(buffer_width, buffer_width);
+
+  fx.translate(buffer_width/2, buffer_width/2);
+  dydx.translate(buffer_width/2, buffer_width/2);
+
+  // resize ui container
+  document.getElementById("controls").style.height = buffer_width + "px";
+}
+
 function draw() {
   background(220);
   // Draw graph
@@ -99,6 +167,8 @@ function draw() {
   // Move tangent line with mouse
   if (follow_mouse_bool.checked()) {
     graph_pos = parseInt(mouseX / fx.width * points.length) % points.length;
+    if (graph_pos < 0)
+      graph_pos = 0;
   }
 
   // Copy contents of graphics buffers onto canvas
@@ -175,8 +245,8 @@ function graph_dydx() {
   dydx.strokeWeight(1)
   
   // Point info
-  dydx.stroke(255);
-  dydx.fill(255);
+  dydx.stroke(220);
+  dydx.fill(220);
   dydx.text("x = " + rnd(points[graph_pos][0].x), -dydx.width/4-50, dydx.height/4+15);
   dydx.text("y = " + rnd(points[graph_pos][1]), -dydx.width/4-50, dydx.height/4+30);
   dydx.stroke(0);
@@ -191,8 +261,14 @@ function calculate_graph(func) {
         x: k
       };
       // calculate point
-      var p = createVector(k, math.evaluate(func, scope));
-      
+      var p;
+      try {
+        p = createVector(k, math.evaluate(func, scope)); 
+      } catch (error) {
+        points = [];
+        error_text.html(error);
+        return -1;
+      }
       // calculate slope at each point (numerical differentiation)
       scope.x += 0.00001;
       var d = derive(p.y, math.evaluate(func, scope));
@@ -212,4 +288,8 @@ function rnd(x, places=3) {
   // rounds x to given number of decimal places
   return parseInt(x * pow(10, places)) / pow(10, places);
   
+}
+
+function br() {
+  createElement("br").parent(ui_container);
 }
