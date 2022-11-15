@@ -5,7 +5,7 @@ var buffer_width = screen.width * 0.33; // In pixels
 
 var graph_size = 20;
 var unit_size;
-var curve_resolution = 20;  // # of evaluations between each whole unit
+var graph_resolution = 20;  // # of evaluations between each whole unit
 
 // Graph point vars
 var points = [];
@@ -22,6 +22,19 @@ var function_input_button;
 var x_input;
 var evaluate_button;
 var follow_mouse_bool;
+
+var resolution_title_span;
+var resolution_text;
+var resolution_tooltip;
+var resolution_slider;
+var resolution_display;
+
+var show_graph_label;
+var show_graph_info;
+var show_tangent_line;
+
+var capture_button;
+
 var error_text;
 
 var ui_container;
@@ -31,6 +44,17 @@ var fourier_square = '4sin(x)/PI+4sin(3x)/3PI+4sin(5x)/5PI+4sin(7x)/7PI+4sin(9x)
 
 var fourier_saw = 
 '2sin(x)/-PI+2sin(2x)/2PI+2sin(3x)/-3PI+2sin(4x)/4PI+2sin(5x)/-5PI+2sin(6x)/6PI+2sin(7x)/-7PI+2sin(8x)/8PI+2sin(9x)/-9PI+2sin(10x)/10PI+2sin(11x)/-11PI+2sin(12x)/12PI'
+
+// Custom functions
+var custom_funcs = localStorage.getItem("custom_funcs");
+if (custom_funcs === null) {
+  custom_funcs = [];
+} else {
+  custom_funcs = custom_funcs.split(',');
+}
+
+// Asset paths
+const TOOLTIP_PATH = "../Assets/info.png";
 
 function setup() {
   // Canvas and graphics buffers
@@ -59,13 +83,28 @@ function setup() {
   // initialize ui elements
   function_select = createSelect();
   function_input = createInput();
-  function_input_button = createButton("Enter");
+  function_input_button = createButton("Graph");
   x_input = createInput('', 'number');
   evaluate_button = createButton("Evaluate");
   follow_mouse_bool = createCheckbox("Follow mouse", false);
+
+  resolution_title_span = createSpan();
+  resolution_text = createElement("h5", "Resolution");
+  resolution_tooltip = createElement("img");
+  resolution_slider = createSlider(1, 50, 5);
+  resolution_display = createP();
+  resolution_text.parent(resolution_title_span);
+  resolution_tooltip.parent(resolution_title_span);
+
+  show_graph_label = createCheckbox("Show graph label", true);
+  show_graph_info = createCheckbox("Show point and slope info", true);
+  show_tangent_line = createCheckbox("Show tangent line", true);
+
+  capture_button = createButton("Capture image");
+
   error_text = createP();
 
-  // set ui elements as children of ui div
+  // set ui elements as children of ui container div
   function_select.parent(ui_container);
   br();
   function_input.parent(ui_container);
@@ -75,11 +114,33 @@ function setup() {
   evaluate_button.parent(ui_container);
   br();
   follow_mouse_bool.parent(ui_container);
+  hr();
+  
+  resolution_title_span.parent(ui_container);
+  br();
+  resolution_slider.parent(ui_container);
+  resolution_display.parent(ui_container);
+  hr();
+
+  show_graph_label.parent(ui_container);
+  show_graph_info.parent(ui_container);
+  show_tangent_line.parent(ui_container);
+  hr();
+
+  capture_button.parent(ui_container);
+
   error_text.parent(ui_container);
 
   // misc ui stuff
+  function_select.id("fx-select");
   function_input.attribute("placeholder", "f(x) = ");
   x_input.attribute("placeholder", "x = ");
+
+  resolution_title_span.id("res-title");
+  resolution_tooltip.attribute("src", TOOLTIP_PATH);
+  resolution_tooltip.attribute("width", "16px");
+  resolution_tooltip.attribute("title", "# of calculations between whole numbers (integer)");
+
   error_text.id("error");
   
   // UI functions
@@ -90,6 +151,12 @@ function setup() {
     if (calculate_graph(function_input.value()) == -1) {
       points.push(null_point);
       console.log(points);
+    } else {
+      function_select.option(function_input.value());
+      function_select.value(function_input.value());
+
+      custom_funcs.push(function_select.value());
+      localStorage.setItem("custom_funcs", custom_funcs.toString());
     }
   });
 
@@ -111,8 +178,35 @@ function setup() {
     }
     
   });
+
+  // Update graph resolution with slider
+  resolution_slider.changed(() => {
+    graph_pos = 0;
+    points = [];
+    graph_resolution = resolution_slider.value();
+    resolution_display.html(graph_resolution);
+
+    calculate_graph(function_select.value());
+  });
   
+  // Disable/enable info checkbox with tangent line checkbox
+  show_tangent_line.changed(() => {
+    if (!show_tangent_line.checked()) {
+      show_graph_info.checked(false);
+      show_graph_info.attribute("disabled", true);
+    } else {
+      show_graph_info.removeAttribute("disabled");
+    }
+  });
+
+  // Capture image from graph
+  capture_button.mousePressed(() => {
+    save(c, `graph-(${function_select.elt.options[function_select.elt.selectedIndex].text}).png`);
+  });
+
+  // Function selection
   // Setup function dropdown
+  function_select.option("--Preset Functions--");
   function_select.option("x^2");
   function_select.option("2^x");
   function_select.option("e^x");
@@ -125,6 +219,17 @@ function setup() {
   function_select.option("cot(x)");
   function_select.option("Fourier Square Wave", fourier_square);
   function_select.option("Fourier Sawtooth Wave", fourier_saw);
+  function_select.option("--Custom Functions--");
+
+  function_select.disable("--Preset Functions--");
+  function_select.disable("--Custom Functions--");
+
+  for (var i = 0; i < custom_funcs.length; i++) {
+    function_select.option(custom_funcs[i]);
+  }
+  localStorage.clear();
+
+  function_select.value("x^2");
   
   function_select.changed(() => {
     points = [];
@@ -162,7 +267,7 @@ function draw() {
   image(dydx, buffer_width, 0);
 
   // Increment position on graph, used by tangent line
-  graph_pos = !user_selected ? (graph_pos + 1) % points.length : graph_pos;
+  graph_pos = !user_selected ? (graph_pos + 1) % points.length : graph_pos; // Necessary to use deltaTime to correctly calculate gif length
 
   // Move tangent line with mouse
   if (follow_mouse_bool.checked()) {
@@ -195,24 +300,32 @@ function graph_func() {
   }
   
   // Tangent line
-  fx.stroke(255, 0, 0);
-  fx.strokeWeight(4);
-  var x = points[graph_pos][0].x;
-  var y = points[graph_pos][0].y;
-  var m = points[graph_pos][1];
-  var angle = atan2(m, 1);
-  
-  var scale = cos(angle);
-  
-  fx.circle(x*unit_size, -y*unit_size, 5);
-  fx.line(x*unit_size-len_tan_line*unit_size*scale, -y*unit_size+m*scale*len_tan_line*unit_size, x*unit_size+len_tan_line*unit_size*scale, -y*unit_size-m*scale*len_tan_line*unit_size);
-  fx.strokeWeight(1);
-  fx.stroke(0);
-  
+  if (show_tangent_line.checked()) {
+    fx.stroke(255, 0, 0);
+    fx.strokeWeight(4);
+    var x = points[graph_pos][0].x;
+    var y = points[graph_pos][0].y;
+    var m = points[graph_pos][1];
+    var angle = atan2(m, 1);
+    
+    var scale = cos(angle);
+    
+    fx.circle(x*unit_size, -y*unit_size, 5);
+    fx.line(x*unit_size-len_tan_line*unit_size*scale, -y*unit_size+m*scale*len_tan_line*unit_size, x*unit_size+len_tan_line*unit_size*scale, -y*unit_size-m*scale*len_tan_line*unit_size);
+    fx.strokeWeight(1);
+    fx.stroke(0);
+  }
+
   // Point/slope information
-  fx.text("x = " + rnd(points[graph_pos][0].x), fx.width/4, fx.height/4);
-  fx.text("y = " + rnd(points[graph_pos][0].y), fx.width/4, fx.height/4 + 15);
-  fx.text("m = " + rnd(points[graph_pos][1]), fx.width/4, fx.height/4 + 30);
+  if (show_graph_info.checked()) {
+    fx.text("x = " + rnd(points[graph_pos][0].x), fx.width/4, fx.height/4);
+    fx.text("y = " + rnd(points[graph_pos][0].y), fx.width/4, fx.height/4 + 15);
+    fx.text("m = " + rnd(points[graph_pos][1]), fx.width/4, fx.height/4 + 30);
+  }
+
+  // Graph label
+  if (show_graph_label.checked())
+    fx.text("f (x)", -fx.width/2 + 10, -fx.width/2 + 20);
   
 }
 
@@ -238,25 +351,33 @@ function graph_dydx() {
   }
   
   // Position marker
-  dydx.stroke(255, 0, 0);
-  dydx.strokeWeight(4);
-  dydx.fill(255, 0, 0);
-  dydx.circle(points[graph_pos][0].x * unit_size, -points[graph_pos][1] * unit_size, 5);
-  dydx.strokeWeight(1)
+  if (show_tangent_line.checked()) {
+    dydx.stroke(255, 0, 0);
+    dydx.strokeWeight(4);
+    dydx.fill(255, 0, 0);
+    dydx.circle(points[graph_pos][0].x * unit_size, -points[graph_pos][1] * unit_size, 5);
+    dydx.strokeWeight(1);
+  }
   
   // Point info
   dydx.stroke(220);
   dydx.fill(220);
-  dydx.text("x = " + rnd(points[graph_pos][0].x), -dydx.width/4-50, dydx.height/4+15);
-  dydx.text("y = " + rnd(points[graph_pos][1]), -dydx.width/4-50, dydx.height/4+30);
+  if (show_graph_info.checked()) {
+    dydx.text("x = " + rnd(points[graph_pos][0].x), -dydx.width/4-50, dydx.height/4+15);
+    dydx.text("y = " + rnd(points[graph_pos][1]), -dydx.width/4-50, dydx.height/4+30);
+  }
+
+  // Graph label
+  if (show_graph_label.checked())
+    dydx.text("f '(x)", -dydx.width/2 + 10, -dydx.width/2 + 20);
   dydx.stroke(0);
   dydx.fill(0);
 }
 
 function calculate_graph(func) {
   for (var i = -graph_size/2-1; i < graph_size/2+1; i++) {
-    for (var j = 0; j < curve_resolution; j++) {
-      var k = i + j/curve_resolution;
+    for (var j = 0; j < graph_resolution; j++) {
+      var k = i + j/graph_resolution;
       var scope = {
         x: k
       };
@@ -292,4 +413,18 @@ function rnd(x, places=3) {
 
 function br() {
   createElement("br").parent(ui_container);
+}
+
+function hr() {
+  createElement("hr").parent(ui_container);
+}
+
+// Disable option in select field
+function disable(select_id, option) {
+  var options = select('#' + select_id);
+  for (var i = 0; i < options.elt.length; i++) {
+    if (options.elt[i].value == option) {
+      options.elt[i].disabled = true;
+    }
+  }
 }
