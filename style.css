@@ -1,10 +1,72 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Afacad Flux';
+    background-color: rgb(255, 247, 236);
+    background-color: rgb(207, 187, 158);
+}
+#header {
+    background-color: rgb(255, 247, 236);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    margin: 0;
+    
+    h1 {
+        margin: 0;
+        float: left;
+        padding: 0.5rem;
+    }
+    .links {
+        height: 100%;
+        float: right;
+
+        a {
+            padding: 0.5rem;
+            color: black;
+            transition: background-color 100ms ease-in 50ms;
+        }
+        a:hover {
+            background-color: rgb(158, 178, 207);
+            background-color: rgba(158, 178, 207, 0.25);
+        }
+    }
+
+    box-shadow: 0px 5px 5px gray;
 }
 
-#header {
-    text-align: center;
-    margin: auto;
+#about {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    width: 66vw;
+    h1 {
+        display: table;
+        font-size: 3em;
+        text-align: justify;
+        text-decoration: underline;
+        margin: 0;
+        padding: 0;
+    }
+    p {
+        line-height: 1.5;
+        background-color: rgb(255, 247, 236);
+        margin-top: 0;
+
+        font-weight: 500;
+        text-align: justify;
+        font-size: 25pt;
+        padding: 0.5em;
+        border: 2px;
+        border-style: solid;
+        border-radius: 5px;
+        margin-bottom: 0;
+
+        box-shadow: 5px 5px 5px gray;
+    }    
 }
 
 #apps {
@@ -20,4 +82,11 @@ body {
 #polars {
     float: center;
     clear: both;
+}
+
+#dropdown {
+    position: relative;
+    display: inline-block;
+    background-color: black;
+    transition: all 100ms ease-in-out 50ms;
 }
