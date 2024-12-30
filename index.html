@@ -2,7 +2,6 @@
 <html lang="en">
     <head>
         <title>Math Animations</title>
-
         <link href="https://fonts.googleapis.com/css?family=Afacad+Flux:100,200,300,regular,500,600,700,800,900" rel="stylesheet" />
         <link rel="stylesheet" type="text/css" href="style.css">
     </head>
@@ -11,21 +10,25 @@
         <div id="header" class="collider">
             <h1>Math Animations</h1>
             <div class="links">
-                <h1><a href="#" id="projects">Projects</a></h1>
-                <h1><a href="#">About</a></h1>
-                <h1><a href="https://github.com/dsch7705/Math-Animations">GitHub</a></h1>
+                <div class="dropdown">
+                    <a href="#">Projects</a>
+                    <ul class="dropdown-content">
+                        <li><a href="CubicBezierCurve/bezier.html">Bezier Curve</a></li>
+                        <li><a href="PolarGraphs/polars.html">Polar Graphs</a></li>
+                        <li><a href="DifferentiationV2/diff.html">Differentiation</a></li>
+                    </ul>
+                </div>
+                <div><a href="https://github.com/dsch7705/Math-Animations">GitHub</a></div>
             </div>
         </div>
         <div id="about">
             <h1>About</h1>
             <p class="collider">
                 This is an archive of projects I made during my junior and senior years of high school while taking Pre-Calc and Calc 1 (respectively). 
-                <br>
-                <br>
+                <br><br>
                 Each project was inspired by topics covered in class and implemented in JavaScript with the p5.js library.
             </p>
         </div>
     </body>
     <script src="background.js"></script>
-    <script src="menu.js"></script>
 </html>

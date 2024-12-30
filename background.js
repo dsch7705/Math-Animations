@@ -5,8 +5,10 @@ const colliders = []
 
 // Event listeners
 window.addEventListener('resize', (event) => {
-    cw = c.width = window.innerWidth;
-    ch = c.height = window.innerHeight;
+    cw = window.innerWidth;
+    ch = window.innerHeight;
+    c.width = cw;
+    c.height = ch;
 
     document.querySelectorAll('.collider').forEach((c, i) => {
         colliders[i] = (c.getBoundingClientRect());
@@ -151,6 +153,7 @@ function setup()
 {
     // Canvas
     c = document.createElement('canvas');
+    document.body.appendChild(c);
     ctx = c.getContext('2d');
     cw = c.width = window.innerWidth;
     ch = c.height = window.innerHeight;
@@ -180,9 +183,12 @@ function update()
     for (let i = 0; i < dotCnt; i++)
     {
         dots[i].draw(dT);
+        console.log("CW: " + cw + " | CH: " + ch);
     }
     
-    document.body.style.background = 'url(' + c.toDataURL() + ')';
+    let data = c.toDataURL();
+    //document.body.style.background = 'url(' + data + ')';
+    console.log(data);
     requestAnimationFrame(update);
 }
 function clear_bg(color)
